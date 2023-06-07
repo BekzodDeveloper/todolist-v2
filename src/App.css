@@ -2,3 +2,12 @@
     display: flex;
     grid-gap: 50px;
 }
+.error{
+    border:1px solid red;
+}
+.error-message{
+    color: red;
+}
+.activeFilter{
+    background-color: #4c63d2;
+}

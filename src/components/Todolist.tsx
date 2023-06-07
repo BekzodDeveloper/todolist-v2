@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {ChangeEvent, KeyboardEvent, FC, useState} from "react";
+import {ChangeEvent, KeyboardEvent, FC, useState,} from "react";
 import {FilterValueType} from "../App";
 
 export type TaskType = {
@@ -15,8 +15,9 @@ type TodolistType = {
     removeTask: (id: string) => void
     changeFilter: (filterValue: FilterValueType) => void
     addTask: (title: string) => void
+    changeStatus: (taskId: string, isDone: boolean) => void
+    filter: FilterValueType
 };
-type State = {};
 
 export const Todolist: FC<TodolistType> =
     ({
@@ -25,22 +26,28 @@ export const Todolist: FC<TodolistType> =
          removeTask,
          changeFilter,
          addTask,
+         changeStatus,
+         filter
      }) => {
 
         const [newTaskTitle, setNewTaskTitle] = useState("")
 
-
+        const [error, setError] = useState<string | null>(null)
 
         function onAddTask() {
             if (newTaskTitle.trim() !== "") {
-                addTask(newTaskTitle)
+                addTask(newTaskTitle.trim())
                 setNewTaskTitle("")
+                setError(null)
+            } else if (newTaskTitle.trim() === "") {
+                setError("Field is required")
             }
 
         }
 
         function onChangeNewTaskTitle(event: ChangeEvent<HTMLInputElement>) {
             setNewTaskTitle(event.currentTarget.value);
+            setError(null)
         }
 
         function onKeyPress(e: KeyboardEvent<HTMLInputElement>) {
@@ -71,18 +78,26 @@ export const Todolist: FC<TodolistType> =
                                onChange={onChangeNewTaskTitle}
                                onKeyPress={onKeyPress}
                                type="text" placeholder={"Type title"}
+                               className={error ? "error" : ""}
                         />
+
                         <button onClick={onAddTask}>+</button>
+                        {error ? <div className="error-message">{error}</div> : ""}
+
                     </div>
                 </div>
                 <ul>
                     {tasks.map(t => {
-                        function onRemoveTask(){
-                            removeTask(t.id)
-                        }
+                        const onRemoveTask = () => removeTask(t.id);
+                        const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
+                            changeStatus(t.id, e.currentTarget.checked)
+                        };
 
                         return <li key={t.id}>
-                            <input type={"checkbox"} checked={t.isDone}/>
+                            <input type={"checkbox"}
+                                   checked={t.isDone}
+                                   onChange={onChangeStatus}
+                            />
                             <span>{t.title}</span>
                             <button onClick={onRemoveTask}>X
                             </button>
@@ -90,9 +105,10 @@ export const Todolist: FC<TodolistType> =
                     })}
                 </ul>
                 <div>
-                    <button onClick={onFilterAll}>All</button>
-                    <button onClick={onFilterCompleted}>Completed</button>
-                    <button onClick={onFilterActive}>Active</button>
+                    <button className={filter === "all" ? "activeFilter" : ""} onClick={onFilterAll}>All</button>
+                    <button className={filter === "completed" ? "activeFilter" : ""} onClick={onFilterCompleted}>Completed</button>
+                    <button className={filter === "active" ? "activeFilter" : ""} onClick={onFilterActive}>Active
+                    </button>
                 </div>
             </div>
         )
