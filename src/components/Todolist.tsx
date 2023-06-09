@@ -1,7 +1,9 @@
 // @flow
 import * as React from 'react';
-import {ChangeEvent, KeyboardEvent, FC, useState,} from "react";
+import {ChangeEvent, FC, useState} from 'react';
 import {FilterValueType} from "../App";
+import {AddItemForm} from "./AddItemForm";
+import {EditableSpan} from "./EditableSpan";
 
 export type TaskType = {
     id: string
@@ -12,11 +14,15 @@ export type TaskType = {
 type TodolistType = {
     title: string
     tasks: Array<TaskType>
-    removeTask: (id: string) => void
-    changeFilter: (filterValue: FilterValueType) => void
-    addTask: (title: string) => void
-    changeStatus: (taskId: string, isDone: boolean) => void
+    removeTask: (id: string, todolistId: string) => void
+    changeFilter: (filterValue: FilterValueType, todolistId: string) => void
+    addTask: (title: string, todolistId: string) => void
+    changeStatus: (taskId: string, isDone: boolean, todolistId: string) => void
     filter: FilterValueType
+    todolistId: string,
+    removeTodolist: (todolistId: string) => void
+    onChangeTitle: (value: string, todolistId: string) => void
+    onChangeTaskTitle: (title: string, taskId: string, todolistId: string) => void
 };
 
 export const Todolist: FC<TodolistType> =
@@ -27,89 +33,84 @@ export const Todolist: FC<TodolistType> =
          changeFilter,
          addTask,
          changeStatus,
-         filter
+         filter,
+         todolistId,
+         removeTodolist,
+         onChangeTitle,
+         onChangeTaskTitle
      }) => {
-
-        const [newTaskTitle, setNewTaskTitle] = useState("")
-
-        const [error, setError] = useState<string | null>(null)
-
-        function onAddTask() {
-            if (newTaskTitle.trim() !== "") {
-                addTask(newTaskTitle.trim())
-                setNewTaskTitle("")
-                setError(null)
-            } else if (newTaskTitle.trim() === "") {
-                setError("Field is required")
-            }
-
-        }
-
-        function onChangeNewTaskTitle(event: ChangeEvent<HTMLInputElement>) {
-            setNewTaskTitle(event.currentTarget.value);
-            setError(null)
-        }
-
-        function onKeyPress(e: KeyboardEvent<HTMLInputElement>) {
-            if (e.ctrlKey && e.charCode === 13) {
-                onAddTask();
-            }
-        }
+        const [taskTitle, setTaskTitle] = useState<string>("")
 
         function onFilterAll() {
-            changeFilter("all")
+            changeFilter("all", todolistId)
         }
 
         function onFilterActive() {
-            changeFilter("active")
+            changeFilter("active", todolistId)
         }
 
         function onFilterCompleted() {
-            changeFilter("completed")
+            changeFilter("completed", todolistId)
+        }
+
+        function onAddTask(title: string) {
+            addTask(title, todolistId)
+        }
+
+        function onChange(value: string) {
+            onChangeTitle(value, todolistId)
         }
 
 
         return (
             <div>
                 <div>
-                    <h1>{title}</h1>
-                    <div>
-                        <input value={newTaskTitle}
-                               onChange={onChangeNewTaskTitle}
-                               onKeyPress={onKeyPress}
-                               type="text" placeholder={"Type title"}
-                               className={error ? "error" : ""}
+                    <h1>
+                        <EditableSpan
+                            title={title}
+                            itemId={todolistId}
+                            removeItem={removeTodolist}
+                            onChangeText={onChange}
                         />
+                    </h1>
 
-                        <button onClick={onAddTask}>+</button>
-                        {error ? <div className="error-message">{error}</div> : ""}
-
-                    </div>
+                    <AddItemForm addItem={onAddTask}/>
                 </div>
                 <ul>
                     {tasks.map(t => {
-                        const onRemoveTask = () => removeTask(t.id);
+
+
+                        const onRemoveTask = () => removeTask(t.id, todolistId);
                         const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-                            changeStatus(t.id, e.currentTarget.checked)
+                            changeStatus(t.id, e.currentTarget.checked, todolistId)
                         };
+                        const onChangeTitle = () => {
+                            setTaskTitle(t.title)
+                            onChangeTaskTitle(t.title, t.id, todolistId)
+                            console.log(t.title + " tId: " + t.id + " tlId: " + todolistId)
+                        }
 
                         return <li key={t.id}>
                             <input type={"checkbox"}
                                    checked={t.isDone}
                                    onChange={onChangeStatus}
                             />
-                            <span>{t.title}</span>
-                            <button onClick={onRemoveTask}>X
-                            </button>
+                            <EditableSpan title={t.title}
+                                          itemId={t.id}
+                                          removeItem={onRemoveTask}
+                                          onChangeText={onChangeTitle}/>
                         </li>
                     })}
                 </ul>
                 <div>
                     <button className={filter === "all" ? "activeFilter" : ""} onClick={onFilterAll}>All</button>
-                    <button className={filter === "completed" ? "activeFilter" : ""} onClick={onFilterCompleted}>Completed</button>
+                    <button className={filter === "completed" ? "activeFilter" : ""}
+                            onClick={onFilterCompleted}>Completed
+                    </button>
                     <button className={filter === "active" ? "activeFilter" : ""} onClick={onFilterActive}>Active
                     </button>
                 </div>
             </div>
         )
     }
+
