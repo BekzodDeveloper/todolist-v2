@@ -1,3 +1,6 @@
+body{
+    overflow-x: auto;
+}
 .todolist__wrapper{
     display: flex;
     grid-gap: 50px;

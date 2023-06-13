@@ -1,5 +1,6 @@
 import * as React from "react";
 import {ChangeEvent, FC, useState} from "react";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 
 export type EditableSpanType = {
     title: string
@@ -26,10 +27,12 @@ export const EditableSpan: FC<EditableSpanType> =
         }
 
         function activateViewMode() {
-            debugger
-            setEditMode(false);
-            setText(text)
-            onChangeText(text)
+            if (text.trim() !== "") {
+                setEditMode(false);
+                setText(text)
+                onChangeText(text)
+            }
+
         }
 
         function onChangeInput(e: ChangeEvent<HTMLInputElement>) {
@@ -40,19 +43,33 @@ export const EditableSpan: FC<EditableSpanType> =
             removeItem(itemId)
         }
 
-        return <span style={{margin: "0px 0px 10px"}}>
-            {editMode ?
-                <input autoFocus
-                       value={text}
-                       onBlur={activateViewMode}
-                       onChange={onChangeInput} type="text"/>
-                :
-                <span onDoubleClick={activateEditMode}>
-                    {title}
-                </span>
-            }
+        return (
+            <span style={{margin: "0px 0px 10px"}}>
+            <Container fluid>
+                <Row className="justify-content-lg-between">
+                    <Col style={{padding: "0px"}} md={10}>
+                        {editMode ?
+                            <Form.Control
+                                size={"sm"}
+                                placeholder="Type a title"
+                                aria-label="Title"
+                                aria-describedby="basic-addon1"
+                                value={text}
+                                autoFocus
+                                onBlur={activateViewMode}
+                                onChange={onChangeInput} type="text"
+                            />
+                            :
+                            <span onDoubleClick={activateEditMode}>
+                            {title}
+                        </span>
+                        }
+                    </Col>
+                    <Col style={{padding: "0px"}} md={"auto"}>
+                        <Button size="sm" variant={"outline-danger"} onClick={onRemoveItem}>x</Button>
 
-
-            <button onClick={onRemoveItem}>X</button>
-        </span>
+                    </Col>
+                </Row>
+            </Container>
+        </span>)
     }

@@ -4,6 +4,7 @@ import {ChangeEvent, FC, useState} from 'react';
 import {FilterValueType} from "../App";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 
 export type TaskType = {
     id: string
@@ -63,48 +64,93 @@ export const Todolist: FC<TodolistType> =
 
         return (
             <div>
-                <div>
-                    <h1>
-                        <EditableSpan
-                            title={title}
-                            itemId={todolistId}
-                            removeItem={removeTodolist}
-                            onChangeText={changeTodolistTitle}
-                        />
-                    </h1>
+                <Card style={{width: '18rem'}}>
+                    <Card.Body>
+                        <Card.Title>
+                            <h1 style={{fontSize: "24px",marginBottom:"40px"}}>
+                                <EditableSpan
+                                    title={title}
+                                    itemId={todolistId}
+                                    removeItem={removeTodolist}
+                                    onChangeText={changeTodolistTitle}
+                                />
+                            </h1>
+                        </Card.Title>
+                        <Card.Text>
+                            <div><AddItemForm addItem={onAddTask}/></div>
+                            <ul style={{padding: "0px", margin: "0px"}}>
+                                {tasks.map(t => {
+                                    const onRemoveTask = () => removeTask(t.id, todolistId);
+                                    const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
+                                        changeStatus(t.id, e.currentTarget.checked, todolistId)
+                                    };
+                                    const changeTaskTitle = (value: string) => {
+                                        onChangeTaskTitle(value, t.id, todolistId)
+                                    }
 
-                    <AddItemForm addItem={onAddTask}/>
-                </div>
-                <ul>
-                    {tasks.map(t => {
-                        const onRemoveTask = () => removeTask(t.id, todolistId);
-                        const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-                            changeStatus(t.id, e.currentTarget.checked, todolistId)
-                        };
-                        const changeTaskTitle = (value:string) => {
-                            onChangeTaskTitle(value, t.id, todolistId)
-                        }
+                                    return <li key={t.id}
+                                               style={{
+                                                   listStyle: "none",
+                                                   marginBottom: "20px"
+                                               }}>
+                                        <Form>
+                                            <Container fluid>
+                                                <Row className="justify-content-lg-between">
+                                                    <Col style={{padding: "0px"}} md={1}>
+                                                        <Form.Check
+                                                            type={"checkbox"}
+                                                            id={t.id}
+                                                            checked={t.isDone}
+                                                            onChange={onChangeStatus}
+                                                        /></Col>
 
-                        return <li key={t.id}>
-                            <input type={"checkbox"}
-                                   checked={t.isDone}
-                                   onChange={onChangeStatus}
-                            />
-                            <EditableSpan title={t.title}
-                                          itemId={t.id}
-                                          removeItem={onRemoveTask}
-                                          onChangeText={changeTaskTitle}/>
-                        </li>
-                    })}
-                </ul>
-                <div>
-                    <button className={filter === "all" ? "activeFilter" : ""} onClick={onFilterAll}>All</button>
-                    <button className={filter === "completed" ? "activeFilter" : ""}
-                            onClick={onFilterCompleted}>Completed
-                    </button>
-                    <button className={filter === "active" ? "activeFilter" : ""} onClick={onFilterActive}>Active
-                    </button>
-                </div>
+                                                    <Col style={{padding: "0px"}}>
+                                                        <EditableSpan
+                                                            title={t.title}
+                                                            itemId={t.id}
+                                                            removeItem={onRemoveTask}
+                                                            onChangeText={changeTaskTitle}/>
+
+                                                    </Col>
+                                                </Row>
+                                            </Container>
+                                        </Form>
+
+                                    </li>
+                                })}
+                            </ul>
+                        </Card.Text>
+                        <div>
+                            <Container>
+                                <Row className="justify-content-lg-between">
+                                    <Col md={"auto"}
+                                        style={{padding: "0px"}}>
+                                        {filter === "all" ?
+                                            <Button variant={"primary"} onClick={onFilterAll}>All</Button>
+                                            : <Button variant={"outline-primary"} onClick={onFilterAll}>All</Button>}
+                                    </Col>
+
+                                    <Col md={"auto"}
+                                        style={{padding: "0px"}}>
+                                        {filter === "completed" ?
+                                            <Button variant={"warning"} onClick={onFilterCompleted}>Completed</Button>
+                                            : <Button variant={"outline-warning"}
+                                                      onClick={onFilterCompleted}>Completed</Button>}
+                                    </Col>
+
+                                    <Col md={"auto"}
+                                        style={{padding: "0px"}}>
+                                        {filter === "active" ?
+                                            <Button variant={"success"} onClick={onFilterActive}>Active</Button>
+                                            : <Button variant={"outline-success"}
+                                                      onClick={onFilterActive}>Active</Button>}
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </div>
+                    </Card.Body>
+                </Card>
+
             </div>
         )
     }

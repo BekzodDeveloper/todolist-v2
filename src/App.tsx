@@ -3,11 +3,13 @@ import './App.css';
 import {TaskType, Todolist} from "./components/Todolist";
 import {v1} from "uuid";
 import {AddItemForm} from "./components/AddItemForm";
+import {Col, Container, Row} from "react-bootstrap";
 
 
 export type FilterValueType = "all" | "active" | "completed";
 export type TodolistType = { id: string, title: string, filter: FilterValueType };
 export type TasksStateType = { [key: string]: Array<TaskType> }
+
 
 function App() {
 
@@ -78,8 +80,7 @@ function App() {
     }
 
     function onChangeTaskTitle(taskTitle: string, taskId: string, todolistId: string) {
-        debugger
-         tasks[todolistId].find(t => {
+        tasks[todolistId].find(t => {
             if (taskId === t.id) {
                 t.title = taskTitle;
                 return setTasks({...tasks});
@@ -90,42 +91,49 @@ function App() {
 
     return (
         <div className="App">
-            <div className={"todolist__wrapper"}>
+            <Container fluid style={{padding:"20px"}}>
+                <Row>
+                    <Col>
+                        <div className={"todolist__wrapper"}>
 
-                {todolists.map(tl => {
-                    let tasksForTodolist: Array<TaskType> = tasks[tl.id];
+                            {todolists.map(tl => {
+                                let tasksForTodolist: Array<TaskType> = tasks[tl.id];
 
-                    if (tl.filter === "completed")
-                        tasksForTodolist = tasksForTodolist.filter(t => t.isDone)
+                                if (tl.filter === "completed")
+                                    tasksForTodolist = tasksForTodolist.filter(t => t.isDone)
 
-                    if (tl.filter === "active")
-                        tasksForTodolist = tasksForTodolist.filter(t => !t.isDone)
+                                if (tl.filter === "active")
+                                    tasksForTodolist = tasksForTodolist.filter(t => !t.isDone)
 
 
-                    function changeFilter(filterValue: FilterValueType, todolistId: string) {
-                        let todolist = todolists.find(tl => tl.id === todolistId);
-                        if (todolist) todolist.filter = filterValue;
-                        setTodolists([...todolists]);
-                    }
+                                function changeFilter(filterValue: FilterValueType, todolistId: string) {
+                                    let todolist = todolists.find(tl => tl.id === todolistId);
+                                    if (todolist) todolist.filter = filterValue;
+                                    setTodolists([...todolists]);
+                                }
 
-                    return <Todolist key={tl.id}
-                                     todolistId={tl.id}
-                                     title={tl.title}
-                                     tasks={tasksForTodolist}
-                                     removeTask={removeTask}
-                                     changeFilter={changeFilter}
-                                     addTask={addTask}
-                                     changeStatus={changeStatus}
-                                     filter={tl.filter}
-                                     removeTodolist={removeTodolist}
-                                     onChangeTitle={onChangeTitle}
-                                     onChangeTaskTitle={onChangeTaskTitle}
-                    />
-                })}
-                <AddItemForm addItem={(title: string) => {
-                    addTodolist(title)
-                }}/>
-            </div>
+                                return <Todolist key={tl.id}
+                                                 todolistId={tl.id}
+                                                 title={tl.title}
+                                                 tasks={tasksForTodolist}
+                                                 removeTask={removeTask}
+                                                 changeFilter={changeFilter}
+                                                 addTask={addTask}
+                                                 changeStatus={changeStatus}
+                                                 filter={tl.filter}
+                                                 removeTodolist={removeTodolist}
+                                                 onChangeTitle={onChangeTitle}
+                                                 onChangeTaskTitle={onChangeTaskTitle}
+                                />
+                            })}
+
+                            <AddItemForm addItem={(title: string) => {
+                                addTodolist(title)
+                            }}/>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
         </div>
     );
 }
