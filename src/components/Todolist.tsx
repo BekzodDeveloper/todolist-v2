@@ -39,7 +39,6 @@ export const Todolist: FC<TodolistType> =
          onChangeTitle,
          onChangeTaskTitle
      }) => {
-        const [taskTitle, setTaskTitle] = useState<string>("")
 
         function onFilterAll() {
             changeFilter("all", todolistId)
@@ -57,7 +56,7 @@ export const Todolist: FC<TodolistType> =
             addTask(title, todolistId)
         }
 
-        function onChange(value: string) {
+        function changeTodolistTitle(value: string) {
             onChangeTitle(value, todolistId)
         }
 
@@ -70,7 +69,7 @@ export const Todolist: FC<TodolistType> =
                             title={title}
                             itemId={todolistId}
                             removeItem={removeTodolist}
-                            onChangeText={onChange}
+                            onChangeText={changeTodolistTitle}
                         />
                     </h1>
 
@@ -78,16 +77,12 @@ export const Todolist: FC<TodolistType> =
                 </div>
                 <ul>
                     {tasks.map(t => {
-
-
                         const onRemoveTask = () => removeTask(t.id, todolistId);
                         const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
                             changeStatus(t.id, e.currentTarget.checked, todolistId)
                         };
-                        const onChangeTitle = () => {
-                            setTaskTitle(t.title)
-                            onChangeTaskTitle(t.title, t.id, todolistId)
-                            console.log(t.title + " tId: " + t.id + " tlId: " + todolistId)
+                        const changeTaskTitle = (value:string) => {
+                            onChangeTaskTitle(value, t.id, todolistId)
                         }
 
                         return <li key={t.id}>
@@ -98,7 +93,7 @@ export const Todolist: FC<TodolistType> =
                             <EditableSpan title={t.title}
                                           itemId={t.id}
                                           removeItem={onRemoveTask}
-                                          onChangeText={onChangeTitle}/>
+                                          onChangeText={changeTaskTitle}/>
                         </li>
                     })}
                 </ul>

@@ -26,6 +26,7 @@ export const EditableSpan: FC<EditableSpanType> =
         }
 
         function activateViewMode() {
+            debugger
             setEditMode(false);
             setText(text)
             onChangeText(text)

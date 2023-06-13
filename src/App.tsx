@@ -78,6 +78,7 @@ function App() {
     }
 
     function onChangeTaskTitle(taskTitle: string, taskId: string, todolistId: string) {
+        debugger
          tasks[todolistId].find(t => {
             if (taskId === t.id) {
                 t.title = taskTitle;
