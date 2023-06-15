@@ -76,7 +76,7 @@ export const Todolist: FC<TodolistType> =
                                 />
                             </h1>
                         </Card.Title>
-                        <Card.Text>
+                        <Card.Text as='div'>
                             <div><AddItemForm addItem={onAddTask}/></div>
                             <ul style={{padding: "0px", margin: "0px"}}>
                                 {tasks.map(t => {
