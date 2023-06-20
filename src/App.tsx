@@ -91,7 +91,7 @@ function App() {
 
     return (
         <div className="App">
-            <Container fluid style={{padding:"20px"}}>
+            <Container fluid style={{padding: "20px"}}>
                 <Row>
                     <Col>
                         <div className={"todolist__wrapper"}>
