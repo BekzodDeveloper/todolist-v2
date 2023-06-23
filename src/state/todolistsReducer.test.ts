@@ -40,7 +40,7 @@ test("empty todolist should be added", () => {
 
     const newState = todolistsReducer(
         todolists,
-        addTodolistAC("ASD"));
+        addTodolistAC("ASD",v1()));
 
     expect(newState.length).toBe(3);
     expect(newState[2].title).toBe("ASD");

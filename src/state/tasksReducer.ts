@@ -15,11 +15,12 @@ export const tasksReducer = (state: TasksStateType, action: TasksActionType) => 
     switch (action.type) {
         case "ADD-NEW-TASK":
             const stateCopy = {...state};
-            stateCopy[action.todolistId] =
-                [
-                    {id: v1(), title: action.title, isDone: false},
-                    ...stateCopy[action.todolistId]
-                ];
+            const t = {id: v1(), title: action.title, isDone: false};
+            if (stateCopy[action.todolistId])
+                stateCopy[action.todolistId] = [t, ...stateCopy[action.todolistId]]
+            // console.log("stateCopy: " + {...stateCopy})
+            // console.log("stateCopy[action.todolistId] tasks: " + {...stateCopy[action.todolistId]})
+            console.log(`action.todolistId in tasks: ${action.todolistId}`)
             return stateCopy;
 
         case "REMOVE-TASK":
@@ -28,18 +29,21 @@ export const tasksReducer = (state: TasksStateType, action: TasksActionType) => 
                 [action.todolistId]: [...state[action.todolistId].filter(t => action.taskId !== t.id)]
             }
         case "CHANGE-TASK-STATUS":
-            let index = state[action.todolistId].findIndex(t => t.id === action.taskId);
-            const task = state[action.todolistId][index]
-            if (task) task.isDone = action.isDone;
+            // const copySt = {...state};
+            //
+            // return copySt;
+        let index = state[action.todolistId].findIndex(t => t.id === action.taskId);
+        const task = state[action.todolistId][index]
+        if (task) task.isDone = action.isDone;
 
-            return {
-                ...state,
-                [action.todolistId]: [
-                    ...state[action.todolistId].slice(0, index),
-                    task,
-                    ...state[action.todolistId].slice(index + 1),
-                ]
-            }
+        return {
+            ...state,
+            [action.todolistId]: [
+                ...state[action.todolistId].slice(0, index),
+                task,
+                ...state[action.todolistId].slice(index + 1),
+            ]
+        }
         case "CHANGE-TASK-TITLE":
             const copy = {...state};
 
@@ -50,8 +54,13 @@ export const tasksReducer = (state: TasksStateType, action: TasksActionType) => 
             })
             return copy;
         case "ADD-TODOLIST":
-            const copyOfState = {...state};
-            copyOfState[action.todolistId] = [];
+
+            let copyOfState = {...state};
+            // copyOfState[action.todolistId] = [];
+            copyOfState = {...copyOfState, [action.todolistId]: []}
+
+            // console.log("copyOfState: " + {...state})
+            console.log("action.todolistId in todo: " + action.todolistId)
             return copyOfState;
 
         case "REMOVE-TODOLIST":

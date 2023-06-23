@@ -79,7 +79,8 @@ export const Todolist: FC<TodolistType> =
                         <Card.Text as='div'>
                             <div><AddItemForm addItem={onAddTask}/></div>
                             <ul style={{padding: "0px", margin: "0px"}}>
-                                {tasks.map(t => {
+                                {tasks?.map(t => {
+
                                     const onRemoveTask = () => removeTask(t.id, todolistId);
                                     const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
                                         changeStatus(t.id, e.currentTarget.checked, todolistId)

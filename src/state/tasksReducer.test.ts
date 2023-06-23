@@ -136,7 +136,7 @@ test("New property should be added when todolist is added", () => {
         ]
     }
 
-    const newState = tasksReducer(tasks, addTodolistAC("Todolist"));
+    const newState = tasksReducer(tasks, addTodolistAC("Todolist",v1()));
 
     const keysOfTodolists = Object.keys(newState);
     const newKey = keysOfTodolists.find(k => k !== todolist1 && k !== todolist2);

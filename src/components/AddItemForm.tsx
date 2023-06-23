@@ -14,6 +14,7 @@ export const AddItemForm: FC<AddItemForm>
     const [error, setError] = useState<string | null>(null)
 
     function onAddTask() {
+
         if (newTaskTitle.trim() !== "") {
             addItem(newTaskTitle.trim())
             setNewTaskTitle("")
@@ -52,16 +53,6 @@ export const AddItemForm: FC<AddItemForm>
                     md="auto"><Button variant={"primary"} onClick={onAddTask}>+</Button>
                     {error ? <div className="error-message">{error}</div> : ""}</Col>
             </Row>
-
-            {/*<input value={newTaskTitle}*/}
-            {/*       onChange={onChangeNewTaskTitle}*/}
-            {/*       type="text" placeholder={"Type title"}*/}
-            {/*       onChange={onChangeNewTaskTitle}*/}
-            {/*       onKeyPress={onKeyPress}*/}
-            {/*       className={error ? "error" : ""}*/}
-            {/*/>*/}
-
-
         </Container>
     </div>
 }
